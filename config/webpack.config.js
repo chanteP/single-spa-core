@@ -1,6 +1,7 @@
 'use strict';
 
 const fs = require('fs');
+const glob = require('glob');
 const path = require('path');
 const webpack = require('webpack');
 const resolve = require('resolve');
@@ -265,6 +266,13 @@ module.exports = function(webpackEnv) {
         // Support React Native Web
         // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
         'react-native': 'react-native-web',
+        ...glob.sync('./src/*/').reduce((map, p) => {
+          let n = /([^\/]+)\/$/.exec(p)[1];
+          if(n[0] !== '.'){
+            map[n] = path.resolve(process.cwd(), p);
+          }
+          return map;
+        }, {}),
       },
       plugins: [
         // Adds support for installing with Plug'n'Play, leading to faster installs and adding
