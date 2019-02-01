@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
+import {connect} from 'react-redux';
 import './App.css';
 
 import Menu from 'components/Menu';
 
 import { Switch } from 'antd';
 
-export default class App extends Component {
+export default connect((state) => ({
+    ...state
+}))
+class App extends Component {
     render() {
         return (
             <div className="App">
