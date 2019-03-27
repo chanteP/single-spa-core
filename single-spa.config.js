@@ -2,7 +2,7 @@ import { registerApplication, start } from 'single-spa';
 import './frame/styles/style.css';
 import './frame/utils';
 
-registerApplication('nav', () => import('./src/nav/nav.app.js'), () => true);
+registerApplication('frame', () => import('./src/frame/frame.app.js'), () => true);
 registerApplication('home', () => import('./src/home/home.app.js'), (location) => location.pathname === "" || location.pathname === "/" || location.pathname.startsWith('/home'));
 
 window.loadApp = (app) => {
