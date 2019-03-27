@@ -1,0 +1,11 @@
+.frame{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 0;
+}
+.app-wrapper{
+    box-sizing: border-box;
+    min-height: 100vh;
+}
+
