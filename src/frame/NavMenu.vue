@@ -1,7 +1,9 @@
 <template>
     <div class="nav-menu" ref="nav" @mouseleave="onMouseLeave" @mouseenter="onMouseenter">
-        <ul class="menu-level" v-for="(menuLevel, i) in (selectedStack.length ? selectedStack : menuStack)" :key="i">
-            <li></li>
+        <ul class="menu-level" v-for="(menuLevel, i) in (selectedStack.length > 1 ? selectedStack : menuStack)" :key="i">
+            <li>
+                <div v-if="!i" @click="toRoot" style="line-height:100px;text-align:center;font-size:30px;font-weight:700;cursor:pointer;">/</div>
+            </li>
             <li class="menu-item" v-for="menu in menuLevel" :class="checkMenuStyle(i, menu.id)" @click="onClick(menu)">
                 {{`${menu.id} - ${menu.parentId}(${menu.children.length})`}}
             </li>
@@ -25,9 +27,6 @@ export default {
         this.fetchMenus();
     },
     mounted(){
-        setInterval(_ => {
-            console.log(this.showStack === this.selectedStack, this.currentId, this.showStack)
-        }, 1000);
     },
     computed: {
         currentId(){
@@ -49,23 +48,23 @@ export default {
             this.matchCurrent();
         },
         parseMenus(menus){
-            // let map = {};
-            // // root
-            // map[0] = {
-            //     id: 0,
-            //     children: [],
-            // };
-            // menus.forEach(menu => {
-            //     map[menu.id] = menu;
-            //     menu.children = [];
-            // });
-            // menus.forEach(menu => {
-            //     let parent = menu.parentId && map[menu.parentId];
-            //     if(!parent){return;}
-            //     parent.children.push(menu);
-            // });
-            // return {tree: map[0].children, map};
-            return {tree: getMenu(10).children, map: map};
+            let map = {};
+            // root
+            map[0] = {
+                id: 0,
+                children: [],
+            };
+            menus.forEach(menu => {
+                map[menu.id] = menu;
+                menu.children = [];
+            });
+            menus.forEach(menu => {
+                let parent = menu.parentId && map[menu.parentId];
+                if(!parent){return;}
+                parent.children.push(menu);
+            });
+            return {tree: map[0].children, map};
+            // return {tree: getMenu(10).children, map: map};
         },
         matchCurrent(){
             let path = location.pathname;
@@ -101,6 +100,9 @@ export default {
             }
             rs.unshift(this.menus);
             return rs;
+        },
+        toRoot(){
+            navigateToUrl('/');
         },
         onClick(menu){
             if(!menu.children.length){
