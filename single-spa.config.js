@@ -1,18 +1,29 @@
-import { registerApplication, start } from 'single-spa';
+import { start } from 'single-spa';
 import './frame/styles/style.css';
 import './frame/utils';
+import { registerApp } from './register';
 
-registerApplication('frame', () => import('./src/frame/frame.app.js'), () => true);
-registerApplication('home', () => import('./src/home/home.app.js'), (location) => location.pathname === "" || location.pathname === "/" || location.pathname.startsWith('/home'));
+let projectConfig = [
+  {
+    name: 'frame',
+    main: require('./src/frame/frame.app.js'),
+    url: '/',
+    store: null,
+    base: true,
+    path: '',
+  },
+  {
+    name: 'home',
+    main: '/home/home.js',
+    url: '',
+    store: null,
+    base: true,
+    path: (location) => location.pathname === "" || location.pathname === "/" || location.pathname.startsWith('/home'),
+  },
+];
 
-window.loadApp = (app) => {
-  registerApplication(app, () => import(`./src/${app}/${app}.app.js`), pathPrefix(`/${app}`));
-}
+projectConfig.forEach(app => {
+  registerApp(app);
+});
 
 start();
-
-function pathPrefix(prefix) {
-  return function (location) {
-    return location.pathname.startsWith(`${prefix}`);
-  }
-}

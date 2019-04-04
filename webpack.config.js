@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const AssetsPlugin = require('assets-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 const env = process.env.NODE_ENV || 'development';
@@ -12,9 +13,9 @@ module.exports = {
     'single-spa.config': ['babel-polyfill', 'single-spa.config.js'],
   },
   output: {
-    publicPath: '/dist/',
+    publicPath: '/static/',
     filename: '[name].js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'static'),
   },
   module: {
     rules: [
@@ -67,10 +68,10 @@ module.exports = {
   },
   plugins: [
     // A webpack plugin to remove/clean the build folder(s) before building
-    new CleanWebpackPlugin(['dist']),
+    new AssetsPlugin({filename: 'static/assets.json'}),
     new VueLoaderPlugin()
   ],
-  // devtool: 'cheap-module-eval-source-map',
+  devtool: env === 'production' ? 'source-map' : '',
   externals: [],
   devServer: {
     historyApiFallback: true,
