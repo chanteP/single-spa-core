@@ -5784,10 +5784,10 @@ svgo@^0.7.0:
     sax "~1.2.1"
     whet.extend "~0.9.9"
 
-systemjs@^3.1.0:
-  version "3.1.0"
-  resolved "http://r.npm.sankuai.com/systemjs/download/systemjs-3.1.0.tgz#135f3e7a32e4f6f2d50b41e09a02d5ef8aa46633"
-  integrity sha1-E18+ejLk9vLVC0HgmgLV74qkZjM=
+systemjs@^3.1.1:
+  version "3.1.1"
+  resolved "http://r.npm.sankuai.com/systemjs/download/systemjs-3.1.1.tgz#54dd6e3f7c9e89b7c353b32828d499e7110b0e63"
+  integrity sha1-VN1uP3yeibfDU7MoKNSZ5xELDmM=
 
 tapable@^1.0.0:
   version "1.0.0"

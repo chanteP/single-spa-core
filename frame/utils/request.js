@@ -3,6 +3,7 @@
  *  headers：Object，其中header必须全部小写
     options：fetch的init参数https://developer.mozilla.org/zh-CN/docs/Web/API/WindowOrWorkerGlobalScope/fetch
     silence：Boolean 失败时不弹出toast。默认false
+    proto：Boolean 使用原始数据
 
     预防可能单独使用的情况，不写成vue
  */
@@ -35,7 +36,7 @@ class CustomRequest{
     getRequestUrl(){
         return this.url;
     }
-    send({options = {}, silence = false} = {}){
+    send({options = {}, silence = false, proto = false} = {}){
         let url = this.url + (this.queryString ? '?' : '') + this.queryString;
         let response = this.parseResponse(fetch(url, {
             method: this.method,
@@ -43,7 +44,16 @@ class CustomRequest{
             body: this.body,
             credentials: 'same-origin',
             ...options,
-        })).catch(err => {
+        })).then(rs => {
+            if(proto){
+                return rs;
+            }
+            // code or success
+            if(!rs || Object.prototype.hasOwnProperty.call(rs, 'code') && rs.code === 0){
+                return rs && rs.data || null;
+            }
+            throw new Error(!rs && '' || rs.msg || rs.message);
+        }).catch(err => {
             !silence && window.__defaultRequestErrorHandle && window.__defaultRequestErrorHandle(err);
             throw err;
         }).finally(_ => {
@@ -61,22 +71,21 @@ class CustomRequest{
     }
     parseResponse(fetchPromise){
         return fetchPromise.then(res => {
-            // status判断
-            if (!res.status || res.status >= 300) {
+            if (res.ok || res.status === 200) {
+                return Promise.resolve(res);
+            }
+            else{
                 let error = new Error(res.statusText);
                 error.res = res;
                 throw error;
             }
-            return res;
         }).then(res => {
-            // 转json
-            return res.json();
-        }).then(rs => {
-            // code or success
-            if(!rs || rs.code === 0 || rs.success || rs.isSuccess) {
-                return rs.data;
+            let contentType = res.headers.get('content-type');
+            if (contentType.includes('application/json')) {
+                return res.json();
+            } else {
+                return res.text();
             }
-            throw new Error(!rs && '' || rs.msg || rs.message);
         });
     }
 }

@@ -5,28 +5,30 @@ const AssetsPlugin = require('assets-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 const env = process.env.NODE_ENV || 'development';
+const frameConfig = require('../frame.config');
 
 module.exports = {
   mode: env,
   entry: {
     // Set the single-spa config as the project entry point
-    'single-spa.config': ['babel-polyfill', 'single-spa.config.js'],
+    'single-spa.config': ['babel-polyfill', path.resolve(frameConfig.baseDir, 'single-spa.config.js')],
   },
   output: {
     publicPath: '/static/',
     filename: '[name].js',
-    path: path.resolve(__dirname, 'static'),
+    path: path.resolve(frameConfig.baseDir, frameConfig.staticPath),
   },
   module: {
     rules: [
+      { parser: { system: false } },
       {
         // Webpack style loader added so we can use materialize
         test: /\.css$/,
         use: ['style-loader', 'css-loader', 'sass-loader']
       },
       {
-          test: /\.s(c|a)ss$/,
-          use: ['vue-style-loader', 'css-loader', 'sass-loader']
+        test: /\.s(c|a)ss$/,
+        use: ['vue-style-loader', 'css-loader', 'sass-loader']
       },
       {
         test: /\.js$/,
@@ -44,16 +46,16 @@ module.exports = {
         loader: 'vue-loader',
       },
       {
-          test: /\.(png|jpe?g|gif|svg|woff2?|eot|ttf|otf)(\?.*)?$/,
-          use: [
-              {
-                  loader: 'url-loader',
-                  options: {
-                      limit: 10000,
-                      name: 'static/image/[name].[ext]'
-                  }
-              }
-          ]
+        test: /\.(png|jpe?g|gif|svg|woff2?|eot|ttf|otf)(\?.*)?$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 10000,
+              name: `${frameConfig.assetsPath}/images/[name].[ext]`
+            }
+          }
+        ]
       },
     ],
   },
@@ -68,7 +70,7 @@ module.exports = {
   },
   plugins: [
     // A webpack plugin to remove/clean the build folder(s) before building
-    new AssetsPlugin({filename: 'static/assets.json'}),
+    new AssetsPlugin({filename: `${frameConfig.staticPath}/assets.json`}),
     new VueLoaderPlugin()
   ],
   devtool: env === 'production' ? 'source-map' : '',

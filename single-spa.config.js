@@ -1,6 +1,7 @@
 import { registerApplication, start } from 'single-spa';
 import './frame/styles/style.css';
 import './frame/utils';
+import './frame/libs/system';
 
 let projectConfig = [
   {
@@ -17,7 +18,7 @@ let projectConfig = [
     url: '/',
     store: null,
     base: false,
-    path: '/',
+    path: (location) => location.pathname === '/',
   },
   {
     name: 'mod-vue',
@@ -57,9 +58,11 @@ function pathPrefix(app) {
 
 // 应用注册
 async function registerApp(params) {
+  let mod = typeof params.main === 'string' ? System.import('/static' + params.main).then(mod => mod && mod['default'] || mod) : Promise.resolve(params.main);
+  mod.then(d => console.log('load module', d))
   registerApplication(
       params.name, 
-      () => typeof params.main === 'string' ? System.import(params.main) : Promise.resolve(params.main),
+      () => mod,
       params.base ? (() => true) : pathPrefix(params)
   );
 
