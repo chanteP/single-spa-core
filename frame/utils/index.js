@@ -16,7 +16,10 @@ window.$ui = {
     prompt: Vue.prototype.$prompt,
 };
 
+window.$get = get;
+window.$post = post;
 
+// request 设置
 window.__defaultRequestLoadingStartHandle = () => {window.$ui.loading({lock: true})}
 window.__defaultRequestLoadingEndHandle = () => {window.$ui.loading().close()}
 window.__defaultRequestErrorHandle = (err) => {window.$ui.notify.error({
@@ -27,8 +30,4 @@ window.__defaultRequestLoadingSuccessHandle = (text, title) => {window.$ui.notif
     title: title || '请求成功',
     message: text || '',
 })}
-
-window.$get = get;
-window.$post = post;
-
 

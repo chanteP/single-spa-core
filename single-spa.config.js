@@ -3,7 +3,7 @@ import './frame/styles/style.css';
 import './frame/utils';
 import './frame/libs/system';
 
-let projectConfig = [
+let baseModule = [
   {
     name: 'frame',
     main: require('./src/frame/frame.app.js'),
@@ -20,6 +20,9 @@ let projectConfig = [
     base: false,
     path: (location) => location.pathname === '/',
   },
+];
+
+[...baseModule, 
   {
     name: 'mod-vue',
     main: '/mod-vue/mod-vue.js',
@@ -27,12 +30,11 @@ let projectConfig = [
     store: null,
     base: false,
     path: '/mod-vue',
-  },
-];
-
-projectConfig.forEach(app => {
+  }
+].forEach(app => {
   registerApp(app);
 });
+
 
 start();
 
